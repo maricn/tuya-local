@@ -38,6 +38,7 @@
 - Juskys OH125BW2 oil radiator
 - Kennedy II/JR electric fireplace
 - Kesser Infrared 400W wall and 3000W heaters with and without lights.
+- Klarstein Bornholm Electric heater
 - Klarstein Wonderwall Air Art IR heater
 - Klarstein Wonderwall Bornholm IR heater
 - Klarstein Wonderwall IR heater
@@ -760,7 +761,7 @@ port and password.
 ### Alarm control panels
 
 - BlitzWolf BW-IS6 security alarm system
-- Digoo DG-HAMB GSM security alarm system 
+- Digoo DG-HAMB GSM security alarm system
 - GauTone PG-103 security alarm system
 - HLG Infinity alarm
 - Smart alarm siren (unbranded)

@@ -1,16 +1,15 @@
 {
-
-    "domain": "tuya_local",
-    "name": "Tuya Local",
+    "domain": "tuya_local_maricn",
+    "name": "Tuya Local (maricn)",
     "codeowners": [
         "@make-all"
     ],
     "config_flow": true,
     "dependencies": [],
-    "documentation": "https://github.com/make-all/tuya-local",
+    "documentation": "https://github.com/maricn/tuya-local",
     "integration_type": "device",
     "iot_class": "local_push",
-    "issue_tracker": "https://github.com/make-all/tuya-local/issues",
+    "issue_tracker": "https://github.com/maricn/tuya-local/issues",
     "requirements": [
         "tinytuya==1.15.1",
         "tuya-device-sharing-sdk>=0.1.9,<=0.2.99"
