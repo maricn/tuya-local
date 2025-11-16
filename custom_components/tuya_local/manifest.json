@@ -10,9 +10,13 @@
     "integration_type": "device",
     "iot_class": "local_push",
     "issue_tracker": "https://github.com/maricn/tuya-local/issues",
-    "requirements": [
-        "tinytuya==1.15.1",
-        "tuya-device-sharing-sdk>=0.1.9,<=0.2.99"
+    "loggers": [
+        "tuya_local",
+        "tinytuya"
     ],
-    "version": "2024.11.4"
+    "requirements": [
+        "tinytuya==1.17.4",
+        "tuya-device-sharing-sdk~=0.2.1"
+    ],
+    "version": "2025.11.2"
 }

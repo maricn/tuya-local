@@ -1,28 +1,42 @@
 name: Fan and light switch
 products:
   - id: j11gop7l2l3sblc2
-    name: GHome SW19
-primary_entity:
-  entity: fan
-  dps:
-    - id: 1
-      type: boolean
-      name: switch
-    - id: 3
-      type: string
-      name: speed
-      mapping:
-        - dps_val: level_1
-          value: 25
-        - dps_val: level_2
-          value: 50
-        - dps_val: level_3
-          value: 75
-        - dps_val: level_4
-          value: 100
-secondary_entities:
+    manufacturer: GHome
+    model: SW19
+entities:
+  - entity: fan
+    dps:
+      - id: 1
+        type: boolean
+        name: switch
+      - id: 3
+        type: string
+        name: speed
+        mapping:
+          - dps_val: level_1
+            value: 25
+          - dps_val: level_2
+            value: 50
+          - dps_val: level_3
+            value: 75
+          - dps_val: level_4
+            value: 100
+  - entity: time
+    name: Fan timer
+    category: config
+    translation_key: timer
+    dps:
+      - id: 2
+        type: integer
+        name: second
+        range:
+          min: 0
+          max: 86400
   - entity: number
     name: Fan timer
+    # 2025-07-20
+    deprecated: time.fan_timer
+    class: duration
     category: config
     translation_key: timer
     dps:
@@ -47,9 +61,23 @@ secondary_entities:
         range:
           min: 10
           max: 1000
-  - entity: number
+  - entity: time
     name: Light timer
     category: config
+    translation_key: timer
+    dps:
+      - id: 7
+        type: integer
+        name: second
+        range:
+          min: 0
+          max: 86400
+  - entity: number
+    name: Light timer
+    # 2025-07-20
+    deprecated: time.light_timer
+    category: config
+    class: duration
     translation_key: timer
     dps:
       - id: 7
@@ -77,8 +105,7 @@ secondary_entities:
           - dps_val: memory
             value: memory
   - entity: select
-    name: Backlight
-    icon: "mdi:circle-double"
+    translation_key: light_mode
     category: config
     dps:
       - id: 12
@@ -90,7 +117,7 @@ secondary_entities:
           - dps_val: relay
             value: state
           - dps_val: pos
-            value: position
+            value: locator
   - entity: binary_sensor
     class: problem
     category: diagnostic

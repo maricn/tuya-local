@@ -1,37 +1,37 @@
 name: EV charger
 products:
   - id: dsmsam7xpb3ht7rl
-    name: "Afyeev 16A EV Charger"
-primary_entity:
-  entity: sensor
-  translation_key: status
-  icon: "mdi:ev-station"
-  class: enum
-  dps:
-    - id: 3
-      type: string
-      name: sensor
-      mapping:
-        - dps_val: charger_charging
-          value: charging
-        - dps_val: charger_free
-          value: available
-        - dps_val: charger_insert
-          value: plugged_in
-        - dps_val: charger_free_fault
-          value: fault_unplugged
-        - dps_val: charger_wait
-          value: waiting
-        - dps_val: charger_pause
-          value: paused
-        - dps_val: charger_end
-          value: charged
-        - dps_val: charger_fault
-          value: fault
-    - id: 23
-      type: string
-      name: system_version
-secondary_entities:
+    manufacturer: Afyeev
+    name: "16A EV Charger"
+entities:
+  - entity: sensor
+    translation_key: status
+    icon: "mdi:ev-station"
+    class: enum
+    dps:
+      - id: 3
+        type: string
+        name: sensor
+        mapping:
+          - dps_val: charger_charging
+            value: charging
+          - dps_val: charger_free
+            value: available
+          - dps_val: charger_insert
+            value: plugged_in
+          - dps_val: charger_free_fault
+            value: fault_unplugged
+          - dps_val: charger_wait
+            value: waiting
+          - dps_val: charger_pause
+            value: paused
+          - dps_val: charger_end
+            value: charged
+          - dps_val: charger_fault
+            value: fault
+      - id: 23
+        type: string
+        name: system_version
   - entity: sensor
     class: energy
     dps:
@@ -64,9 +64,9 @@ secondary_entities:
         name: sensor
         optional: true
         unit: V
+        mask: "FFFF000000000000"
         mapping:
-          - mask: "FFFF000000000000"
-            scale: 10
+          - scale: 10
   - entity: sensor
     class: current
     dps:
@@ -75,9 +75,9 @@ secondary_entities:
         name: sensor
         optional: true
         unit: A
+        mask: "000000FFFF000000"
         mapping:
-          - mask: "000000FFFF000000"
-            scale: 1000
+          - scale: 1000
   - entity: sensor
     class: power
     dps:
@@ -87,9 +87,9 @@ secondary_entities:
         optional: true
         unit: kW
         class: measurement
+        mask: "000000000000FFFF"
         mapping:
-          - mask: "000000000000FFFF"
-            scale: 1000
+          - scale: 1000
           - dps_val: null
             value_redirect: total_power
       - id: 9
@@ -173,6 +173,7 @@ secondary_entities:
             value: true
   - entity: number
     translation_key: timer
+    class: duration
     category: config
     dps:
       - id: 28

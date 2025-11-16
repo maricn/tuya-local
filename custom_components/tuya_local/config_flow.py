@@ -5,7 +5,12 @@ from typing import Any
 
 import tinytuya
 import voluptuous as vol
-from homeassistant import config_entries
+from homeassistant.config_entries import (
+    CONN_CLASS_LOCAL_PUSH,
+    ConfigEntry,
+    ConfigFlow,
+    OptionsFlow,
+)
 from homeassistant.const import CONF_HOST, CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
@@ -40,10 +45,10 @@ from .helpers.log import log_json
 _LOGGER = logging.getLogger(__name__)
 
 
-class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+class ConfigFlowHandler(ConfigFlow, domain=DOMAIN):
     VERSION = 13
-    MINOR_VERSION = 7
-    CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
+    MINOR_VERSION = 9
+    CONNECTION_CLASS = CONN_CLASS_LOCAL_PUSH
     device = None
     data = {}
 
@@ -68,9 +73,14 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             self.hass.data[DOMAIN][DATA_STORE] = {}
 
         if user_input is not None:
-            if user_input["setup_mode"] == "cloud":
+            mode = user_input.get("setup_mode")
+            if mode == "cloud" or mode == "cloud_fresh_login":
                 self.init_cloud()
                 try:
+                    if mode == "cloud_fresh_login":
+                        # Force a fresh login
+                        self.cloud.logout()
+
                     if self.cloud.is_authenticated:
                         self.__cloud_devices = await self.cloud.async_get_devices()
                         return await self.async_step_choose_device()
@@ -79,14 +89,14 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     _LOGGER.warning("Connection test failed with %s %s", type(e), e)
                     _LOGGER.warning("Re-authentication is required.")
                 return await self.async_step_cloud()
-            if user_input["setup_mode"] == "manual":
+            if mode == "manual":
                 return await self.async_step_local()
 
         # Build form
         fields: OrderedDict[vol.Marker, Any] = OrderedDict()
         fields[vol.Required("setup_mode")] = SelectSelector(
             SelectSelectorConfig(
-                options=["cloud", "manual"],
+                options=["cloud", "manual", "cloud_fresh_login"],
                 mode=SelectSelectorMode.LIST,
                 translation_key="setup_mode",
             )
@@ -206,7 +216,11 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     hub_choice[CONF_DEVICE_CID] = (
                         device_choice["node_id"] or device_choice["uuid"]
                     )
-                    hub_choice[CONF_LOCAL_KEY] = device_choice[CONF_LOCAL_KEY]
+                    if device_choice.get(CONF_LOCAL_KEY):
+                        hub_choice[CONF_LOCAL_KEY] = device_choice[CONF_LOCAL_KEY]
+                    # Communicate the sub device product id to help match the
+                    # correect device config in the next step.
+                    hub_choice["product_id"] = device_choice["product_id"]
                     self.__cloud_device = hub_choice
                     return await self.async_step_search()
                 else:
@@ -280,22 +294,28 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             # will just leave the IP address blank and hope the user can discover the IP by other
             # means such as router device IP assignments.
             _LOGGER.debug(
-                f"Scanning network to get IP address for {self.__cloud_device['id']}."
+                f"Scanning network to get IP address for {self.__cloud_device.get('id', 'DEVICE_KEY_UNAVAILABLE')}."
             )
             self.__cloud_device["ip"] = ""
             try:
                 local_device = await self.hass.async_add_executor_job(
-                    scan_for_device, self.__cloud_device["id"]
+                    scan_for_device, self.__cloud_device.get("id")
                 )
             except OSError:
                 local_device = {"ip": None, "version": ""}
 
-            if local_device["ip"] is not None:
+            if local_device.get("ip"):
                 _LOGGER.debug(f"Found: {local_device}")
-                self.__cloud_device["ip"] = local_device["ip"]
-                self.__cloud_device["version"] = local_device["version"]
+                self.__cloud_device["ip"] = local_device.get("ip")
+                self.__cloud_device["version"] = local_device.get("version")
+                if not self.__cloud_device.get(CONF_DEVICE_CID):
+                    self.__cloud_device["local_product_id"] = local_device.get(
+                        "productKey"
+                    )
             else:
-                _LOGGER.warning(f"Could not find device: {self.__cloud_device['id']}")
+                _LOGGER.warning(
+                    f"Could not find device: {self.__cloud_device.get('id', 'DEVICE_KEY_UNAVAILABLE')}"
+                )
             return await self.async_step_local()
 
         return self.async_show_form(
@@ -313,18 +333,28 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         if self.__cloud_device is not None:
             # We already have some or all of the device settings from the cloud flow. Set them into the defaults.
-            devid_opts = {"default": self.__cloud_device["id"]}
-            host_opts = {"default": self.__cloud_device["ip"]}
-            key_opts = {"default": self.__cloud_device[CONF_LOCAL_KEY]}
-            if self.__cloud_device["version"] is not None:
-                proto_opts = {"default": float(self.__cloud_device["version"])}
-            if self.__cloud_device[CONF_DEVICE_CID] is not None:
-                devcid_opts = {"default": self.__cloud_device[CONF_DEVICE_CID]}
+            devid_opts = {"default": self.__cloud_device.get("id")}
+            host_opts = {"default": self.__cloud_device.get("ip")}
+            key_opts = {"default": self.__cloud_device.get(CONF_LOCAL_KEY)}
+            if self.__cloud_device.get("version"):
+                proto_opts = {"default": float(self.__cloud_device.get("version"))}
+            if self.__cloud_device.get(CONF_DEVICE_CID):
+                devcid_opts = {"default": self.__cloud_device.get(CONF_DEVICE_CID)}
 
         if user_input is not None:
             self.device = await async_test_connection(user_input, self.hass)
             if self.device:
                 self.data = user_input
+                if self.__cloud_device:
+                    if self.__cloud_device.get("product_id"):
+                        self.device.set_detected_product_id(
+                            self.__cloud_device.get("product_id")
+                        )
+                    if self.__cloud_device.get("local_product_id"):
+                        self.device.set_detected_product_id(
+                            self.__cloud_device.get("local_product_id")
+                        )
+
                 return await self.async_step_select_type()
             else:
                 errors["base"] = "connection"
@@ -363,9 +393,12 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         best_match = 0
         best_matching_type = None
 
-        async for type in self.device.async_possible_types():
+        for type in await self.device.async_possible_types():
             types.append(type.config_type)
-            q = type.match_quality(self.device._get_cached_state())
+            q = type.match_quality(
+                self.device._get_cached_state(),
+                self.device._product_ids,
+            )
             if q > best_match:
                 best_match = q
                 best_matching_type = type.config_type
@@ -375,21 +408,28 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         if self.__cloud_device:
             _LOGGER.warning(
                 "Adding %s device with product id %s",
-                self.__cloud_device["product_name"],
-                self.__cloud_device["product_id"],
+                self.__cloud_device.get("product_name", "UNKNOWN"),
+                self.__cloud_device.get("product_id", "UNKNOWN"),
             )
-            # try:
-            #     self.init_cloud()
-            #     model = await self.cloud.async_get_datamodel(
-            #         self.__cloud_device["id"],
-            #     )
-            #     if model:
-            #         _LOGGER.warning(
-            #             "Device specficication:\n%s",
-            #             json.dumps(model, indent=4),
-            #         )
-            # except Exception as e:
-            #     _LOGGER.warning("Unable to fetch data model from cloud: %s", e)
+            if self.__cloud_device.get("local_product_id") and self.__cloud_device.get(
+                "local_product_id"
+            ) != self.__cloud_device.get("product_id"):
+                _LOGGER.warning(
+                    "Local product id differs from cloud: %s",
+                    self.__cloud_device.get("local_product_id"),
+                )
+            try:
+                self.init_cloud()
+                model = await self.cloud.async_get_datamodel(
+                    self.__cloud_device.get("id"),
+                )
+                if model:
+                    _LOGGER.warning(
+                        "Cloud device spec:\n%s",
+                        log_json(model),
+                    )
+            except Exception as e:
+                _LOGGER.warning("Unable to fetch data model from cloud: %s", e)
         _LOGGER.warning(
             "Device matches %s with quality of %d%%. DPS: %s",
             best_matching_type,
@@ -435,14 +475,14 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry):
-        return OptionsFlowHandler(config_entry)
+    def async_get_options_flow(config_entry: ConfigEntry):
+        return OptionsFlowHandler()
 
 
-class OptionsFlowHandler(config_entries.OptionsFlow):
-    def __init__(self, config_entry):
+class OptionsFlowHandler(OptionsFlow):
+    def __init__(self):
         """Initialize options flow."""
-        self.config_entry = config_entry
+        pass
 
     async def async_step_init(self, user_input=None):
         return await self.async_step_user(user_input)

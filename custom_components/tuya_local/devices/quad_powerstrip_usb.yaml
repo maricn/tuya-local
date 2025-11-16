@@ -1,37 +1,44 @@
 name: Quad powerstrip with USB
-primary_entity:
-  entity: switch
-  name: Outlet 1
-  class: outlet
-  dps:
-    - id: 1
-      type: boolean
-      name: switch
-    - id: 17
-      type: integer
-      name: add_ele
-      optional: true
-    - id: 25
-      type: integer
-      name: ele_calibration
-      optional: true
-secondary_entities:
+entities:
   - entity: switch
-    name: Outlet 2
+    translation_key: outlet_x
+    translation_placeholders:
+      x: "1"
+    class: outlet
+    dps:
+      - id: 1
+        type: boolean
+        name: switch
+      - id: 17
+        type: integer
+        name: add_ele
+        optional: true
+      - id: 25
+        type: integer
+        name: ele_calibration
+        optional: true
+  - entity: switch
+    translation_key: outlet_x
+    translation_placeholders:
+      x: "2"
     class: outlet
     dps:
       - id: 2
         type: boolean
         name: switch
   - entity: switch
-    name: Outlet 3
+    translation_key: outlet_x
+    translation_placeholders:
+      x: "3"
     class: outlet
     dps:
       - id: 3
         type: boolean
         name: switch
   - entity: switch
-    name: Outlet 4
+    translation_key: outlet_x
+    translation_placeholders:
+      x: "4"
     class: outlet
     dps:
       - id: 4
@@ -43,11 +50,74 @@ secondary_entities:
       - id: 5
         type: boolean
         name: switch
-  - entity: number
+  - entity: time
     category: config
     translation_key: timer_x
     translation_placeholders:
       x: "1"
+    dps:
+      - id: 9
+        type: integer
+        name: second
+        range:
+          min: 0
+          max: 86400
+  - entity: time
+    category: config
+    translation_key: timer_x
+    translation_placeholders:
+      x: "2"
+    dps:
+      - id: 10
+        type: integer
+        name: second
+        range:
+          min: 0
+          max: 86400
+  - entity: time
+    category: config
+    translation_key: timer_x
+    translation_placeholders:
+      x: "3"
+    dps:
+      - id: 11
+        type: integer
+        name: second
+        range:
+          min: 0
+          max: 86400
+  - entity: time
+    category: config
+    translation_key: timer_x
+    translation_placeholders:
+      x: "4"
+    dps:
+      - id: 12
+        type: integer
+        name: second
+        range:
+          min: 0
+          max: 86400
+  - entity: time
+    category: config
+    translation_key: timer_x
+    translation_placeholders:
+      x: USB
+    dps:
+      - id: 13
+        name: second
+        type: integer
+        range:
+          min: 0
+          max: 86400
+  - entity: number
+    category: config
+    class: duration
+    translation_key: timer_x
+    translation_placeholders:
+      x: "1"
+    # 2025-07-20
+    deprecated: time.timer_1
     dps:
       - id: 9
         type: integer
@@ -61,9 +131,12 @@ secondary_entities:
             step: 60
   - entity: number
     category: config
+    class: duration
     translation_key: timer_x
     translation_placeholders:
       x: "2"
+    # 2025-07-20
+    deprecated: time.timer_2
     dps:
       - id: 10
         type: integer
@@ -77,9 +150,12 @@ secondary_entities:
             step: 60
   - entity: number
     category: config
+    class: duration
     translation_key: timer_x
     translation_placeholders:
       x: "3"
+    # 2025-07-20
+    deprecated: time.timer_3
     dps:
       - id: 11
         type: integer
@@ -93,9 +169,12 @@ secondary_entities:
             step: 60
   - entity: number
     category: config
+    class: duration
     translation_key: timer_x
     translation_placeholders:
       x: "4"
+    # 2025-07-20
+    deprecated: time.timer_4
     dps:
       - id: 12
         type: integer
@@ -109,6 +188,9 @@ secondary_entities:
             step: 60
   - entity: number
     name: USB timer
+    # 2025-07-20
+    deprecated: time.timer_usb
+    class: duration
     category: config
     translation_key: timer
     dps:
@@ -184,8 +266,7 @@ secondary_entities:
           - dps_val: memory
             value: memory
   - entity: select
-    name: Backlight
-    icon: "mdi:circle-double"
+    translation_key: light_mode
     category: config
     dps:
       - id: 40
@@ -194,11 +275,11 @@ secondary_entities:
         optional: true
         mapping:
           - dps_val: relay
-            value: State
+            value: state
           - dps_val: pos
-            value: Position
+            value: locator
           - dps_val: none
-            value: "Off"
+            value: "off"
   - entity: lock
     translation_key: child_lock
     category: config

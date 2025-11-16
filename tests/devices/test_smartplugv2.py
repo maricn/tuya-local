@@ -1,5 +1,6 @@
 """Tests for the switch entity."""
 
+from homeassistant.components.number import NumberDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.components.switch import SwitchDeviceClass
 from homeassistant.const import (
@@ -36,6 +37,7 @@ class TestSwitchV2(
             self.entities.get("number_timer"),
             max=1440.0,
             unit=UnitOfTime.MINUTES,
+            device_class=NumberDeviceClass.DURATION,
             scale=60,
         )
         self.setUpMultiSensors(
@@ -72,6 +74,7 @@ class TestSwitchV2(
                 "sensor_current",
                 "sensor_power",
                 "sensor_voltage",
+                "time_timer",
             ]
         )
 

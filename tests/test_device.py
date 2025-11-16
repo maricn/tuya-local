@@ -24,6 +24,7 @@ class TestDevice(IsolatedAsyncioTestCase):
         self.hass().data = {"tuya_local": {}}
 
         def job(func, *args):
+            print(f"{args}")
             return func(*args)
 
         self.hass().async_add_executor_job = AsyncMock()
@@ -96,24 +97,6 @@ class TestDevice(IsolatedAsyncioTestCase):
         self.subject._cached_state = {"192": False, "updated_at": time()}
         self.assertEqual(await self.subject.async_inferred_type(), None)
 
-    async def test_refreshes_when_there_is_no_pending_reset(self):
-        self.subject._cached_state = {"updated_at": time() - 19}
-        self.mock_api().status.return_value = {"dps": {"1": "called"}}
-
-        await self.subject.async_refresh()
-
-        self.mock_api().status.assert_called_once()
-        self.assertEqual(self.subject._cached_state["1"], "called")
-
-    async def test_refreshes_when_there_is_expired_pending_reset(self):
-        self.subject._cached_state = {"updated_at": time() - 20}
-        self.mock_api().status.return_value = {"dps": {"1": "called"}}
-
-        await self.subject.async_refresh()
-
-        self.mock_api().status.assert_called_once()
-        self.assertEqual(self.subject._cached_state["1"], "called")
-
     async def test_refresh_retries_up_to_eleven_times(self):
         self.subject._api_protocol_working = False
         self.mock_api().status.side_effect = [
@@ -167,7 +150,15 @@ class TestDevice(IsolatedAsyncioTestCase):
         await self.subject.async_refresh()
 
         self.mock_api().set_version.assert_has_calls(
-            [call(3.1), call(3.2), call(3.4), call(3.5), call(3.3), call(3.1)]
+            [
+                call(3.1),
+                call(3.2),
+                call(3.4),
+                call(3.5),
+                call(3.3),
+                call(3.3),
+                call(3.1),
+            ]
         )
 
     async def test_api_protocol_version_is_stable_once_successful(self):

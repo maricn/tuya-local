@@ -1,32 +1,32 @@
 name: Video doorbell
 products:
   - id: tftanqr9elztfkdp
-    name: HunterTBK HF-6602T
-primary_entity:
-  entity: camera
-  dps:
-    - id: 150
-      type: boolean
-      name: record
-    - id: 154
-      type: base64
-      optional: true
-      sensitive: true
-      persist: false
-      name: snapshot
-      mapping:
-        - dps_val: null
-          value_redirect: movement_pic
-    - id: 115
-      type: base64
-      optional: true
-      sensitive: true
-      name: movement_pic
-    - id: 113
-      type: boolean
-      optional: true
-      name: motion_enable
-secondary_entities:
+    manufacturer: HunterTBK
+    model: HF-6602T
+entities:
+  - entity: camera
+    dps:
+      - id: 150
+        type: boolean
+        name: record
+      - id: 154
+        type: base64
+        optional: true
+        sensitive: true
+        persist: false
+        name: snapshot
+        mapping:
+          - dps_val: null
+            value_redirect: movement_pic
+      - id: 115
+        type: base64
+        optional: true
+        sensitive: true
+        name: movement_pic
+      - id: 113
+        type: boolean
+        optional: true
+        name: motion_enable
   - entity: light
     translation_key: indicator
     category: config
@@ -64,6 +64,7 @@ secondary_entities:
   - entity: sensor
     name: SD status
     class: enum
+    translation_key: status
     category: diagnostic
     icon: "mdi:micro-sd"
     dps:
@@ -72,15 +73,15 @@ secondary_entities:
         name: sensor
         mapping:
           - dps_val: 1
-            value: Normal
+            value: normal
           - dps_val: 2
-            value: Corrupt
+            value: fault
           - dps_val: 3
-            value: Full
+            value: full
           - dps_val: 4
-            value: Formatting
+            value: formatting
           - dps_val: 5
-            value: Missing
+            value: missing
       - id: 109
         type: string
         name: capacity

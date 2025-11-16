@@ -1,15 +1,15 @@
 name: Pet water fountain
 products:
   - id: hpa87ady0hndivqn
-    name: Sobralik FW-W01
-primary_entity:
-  entity: switch
-  icon: "mdi:water-pump"
-  dps:
-    - id: 1
-      type: boolean
-      name: switch
-secondary_entities:
+    manufacturer: Sobralik
+    model: FW-W01
+entities:
+  - entity: switch
+    icon: "mdi:water-pump"
+    dps:
+      - id: 1
+        type: boolean
+        name: switch
   - entity: binary_sensor
     translation_key: tank_empty
     dps:
@@ -51,7 +51,7 @@ secondary_entities:
         type: boolean
         name: button
   - entity: button
-    name: Clean Reset
+    name: Clean reset
     icon: "mdi:pump"
     category: config
     dps:
@@ -59,7 +59,7 @@ secondary_entities:
         type: boolean
         name: button
   - entity: sensor
-    name: Filter Left
+    name: Filter left
     icon: "mdi:air-filter"
     class: duration
     category: diagnostic
@@ -73,7 +73,7 @@ secondary_entities:
           max: 90
         unit: d
   - entity: sensor
-    name: Clean Left
+    name: Clean left
     icon: "mdi:pump"
     class: duration
     category: diagnostic
@@ -87,7 +87,7 @@ secondary_entities:
           max: 31
         unit: d
   - entity: number
-    name: Filter Life
+    name: Filter life
     icon: "mdi:air-filter"
     category: config
     dps:
@@ -100,7 +100,7 @@ secondary_entities:
           max: 90
         unit: d
   - entity: number
-    name: Clean Life
+    name: Clean life
     icon: "mdi:pump"
     category: config
     dps:

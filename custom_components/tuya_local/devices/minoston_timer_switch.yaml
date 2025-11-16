@@ -1,16 +1,95 @@
 name: Timer switch
 products:
   - id: ae0y7quogjcnzery
-    name: Minoston nhT06-WIFI
-primary_entity:
-  entity: switch
-  dps:
-    - id: 1
-      type: boolean
-      name: switch
-secondary_entities:
+    manufacturer: Minoston
+    model: nhT06-WIFI
+entities:
+  - entity: switch
+    dps:
+      - id: 1
+        type: boolean
+        name: switch
+  - entity: time
+    translation_key: timer
+    category: config
+    dps:
+      - id: 7
+        type: integer
+        name: second
+        range:
+          min: 0
+          max: 86400
+  - entity: time
+    name: Preset 1 time
+    translation_key: timer
+    category: config
+    dps:
+      - id: 101
+        type: integer
+        name: second
+        range:
+          min: 0
+          max: 86400
+  - entity: time
+    name: Preset 2 time
+    translation_key: timer
+    category: config
+    dps:
+      - id: 102
+        type: integer
+        name: second
+        range:
+          min: 0
+          max: 86400
+  - entity: time
+    name: Preset 3 time
+    translation_key: timer
+    category: config
+    dps:
+      - id: 103
+        type: integer
+        name: second
+        range:
+          min: 0
+          max: 86400
+  - entity: time
+    name: Preset 4 time
+    translation_key: timer
+    category: config
+    dps:
+      - id: 104
+        type: integer
+        name: second
+        range:
+          min: 0
+          max: 86400
+  - entity: time
+    name: Preset 5 time
+    translation_key: timer
+    category: config
+    dps:
+      - id: 105
+        type: integer
+        name: second
+        range:
+          min: 0
+          max: 86400
+  - entity: time
+    name: Preset 6 time
+    translation_key: timer
+    category: config
+    dps:
+      - id: 106
+        type: integer
+        name: second
+        range:
+          min: 0
+          max: 86400
   - entity: number
     translation_key: timer
+    # 2025-07-20
+    deprecated: time.timer
+    class: duration
     category: config
     dps:
       - id: 7
@@ -22,6 +101,9 @@ secondary_entities:
           max: 86400
   - entity: number
     name: Preset 1 time
+    # 2025-07-20
+    deprecated: time.preset_1_time
+    class: duration
     translation_key: timer
     category: config
     dps:
@@ -34,6 +116,9 @@ secondary_entities:
           max: 86400
   - entity: number
     name: Preset 2 time
+    # 2025-07-20
+    deprecated: time.preset_2_time
+    class: duration
     translation_key: timer
     category: config
     dps:
@@ -46,7 +131,10 @@ secondary_entities:
           max: 86400
   - entity: number
     name: Preset 3 time
+    # 2025-07-20
+    deprecated: time.preset_3_time
     translation_key: timer
+    class: duration
     category: config
     dps:
       - id: 103
@@ -58,6 +146,9 @@ secondary_entities:
           max: 86400
   - entity: number
     name: Preset 4 time
+    # 2025-07-20
+    deprecated: time.preset_4_time
+    class: duration
     translation_key: timer
     category: config
     dps:
@@ -70,6 +161,9 @@ secondary_entities:
           max: 86400
   - entity: number
     name: Preset 5 time
+    # 2025-07-20
+    deprecated: time.preset_5_time
+    class: duration
     translation_key: timer
     category: config
     dps:
@@ -82,6 +176,9 @@ secondary_entities:
           max: 86400
   - entity: number
     name: Preset 6 time
+    # 2025-07-20
+    deprecated: time.preset_6_time
+    class: duration
     translation_key: timer
     category: config
     dps:

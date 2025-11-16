@@ -1,6 +1,13 @@
 {
     "entity": {
         "binary_sensor": {
+            "direction": {
+                "default": "mdi:arrow-left-right",
+                "state": {
+                    "off": "mdi:home-import-outline",
+                    "on": "mdi:home-export-outline"
+                }
+            },
             "defrost": {
                 "default": "mdi:circle-outline",
                 "state": {
@@ -41,6 +48,12 @@
                     "off": "mdi:radiator-off"
                 }
             },
+            "swing_as_powerlevel": {
+                "default": "mdi:radiator",
+                "state": {
+                    "off": "mdi:radiator-off"
+                }
+            },
             "oven": {
                 "default": "mdi:stove"
             },
@@ -65,7 +78,8 @@
                             "medium": "mdi:signal-cellular-2",
                             "high": "mdi:signal-cellular-3",
                             "continuous": "mdi:clock-start",
-                            "intermittent": "mdi:timer-settings-outline"
+                            "intermittent": "mdi:timer-settings-outline",
+                            "timer": "mdi:timer"
                         }
                     }
                 }
@@ -127,18 +141,60 @@
         },
         "number": {
             "timer": {
-                "default": "mdi:timer"
+                "default": "mdi:timer",
+                "state": {
+                    "0": "mdi:timer-cancel"
+                }
             },
             "timer_x": {
-                "default": "mdi:timer"
+                "default": "mdi:timer",
+                "state": {
+                    "0": "mdi:timer-cancel"
+                }
+            },
+            "sensor_threshold": {
+                "default": "mdi:arrow-collapse-up"
             }
         },
         "select": {
+            "currency": {
+                "default": "mdi:cash",
+                "state": {
+                    "usd": "mdi:currency-usd",
+                    "eur": "mdi:currency-eur",
+                    "cny": "mdi:currency-cny",
+                    "cad": "mdi:currency-usd",
+                    "gbp": "mdi:currency-gbp"
+                }
+            },
+            "heat_pump_mode": {
+                "default": "mdi:heat-pump",
+                "state": {
+                    "heat": "mdi:fire",
+                    "cool": "mdi:snowflake",
+                    "auto": "mdi:auto-mode",
+                    "hotwater": "mdi:water-boiler",
+                    "hotwater_heat": "mdi:fire-circle",
+                    "hotwater_cool": "mdi:snowflake-melt",
+                    "hotwater_auto": "mdi:water-boiler"
+                }
+            },
             "initial_state": {
                 "default": "mdi:toggle-switch"
             },
             "language": {
                 "default": "mdi:translate"
+            },
+            "kettle_mode": {
+                "default": "mdi:kettle",
+                "state": {
+                    "keep_warm": "mdi:heat-wave",
+                    "boil": "mdi:kettle-steam",
+                    "quick_boil": "mdi:kettle-steam"
+                }
+            },
+            "light_mode": {
+                "default": "mdi:circle-double"
             },
             "mopping": {
                 "default": "mdi:water"
@@ -167,19 +223,66 @@
                     "preheat": "mdi:fire"
                 }
             },
+            "scene": {
+                "default": "mdi:palette",
+                "state": {
+                    "relax": "mdi:meditation",
+                    "movie": "mdi:filmstrip",
+                    "party": "mdi:party-popper",
+                    "romantic": "mdi:heart",
+                    "night": "mdi:weather-night",
+                    "morning": "mdi:weather-sunny",
+                    "working": "mdi:briefcase",
+                    "leisure": "mdi:airballoon",
+                    "vacation": "mdi:beach",
+                    "reading": "mdi:book-open",
+                    "twinkle": "mdi:shimmer",
+                    "gaming": "mdi:gamepad-variant"
+                }
+            },
             "timer": {
-                "default": "mdi:timer"
+                "default": "mdi:timer",
+                "state": {
+                    "cancel": "mdi:timer-cancel"
+                }
             },
             "temperature_unit": {
                 "default": "mdi:temperature-celsius",
                 "state": {
                     "fahrenheit": "mdi:temperature-fahrenheit"
                 }
+            },
+            "breaker_trigger_action": {
+                "default": "mdi:electric-switch-closed",
+                "state": {
+                    "ignore": "mdi:electric-switch-closed",
+                    "alarm": "mdi:bell-alert",
+                    "trip_breaker": "mdi:electric-switch"
+                }
             }
         },
         "sensor": {
+            "air_quality": {
+                "default": "mdi:weather-dust",
+                "state": {
+                    "excellent": "mdi:emoticon-excited",
+                    "good": "mdi:emoticon-happy",
+                    "moderate": "mdi:emoticon-neutral",
+                    "poor": "mdi:emoticon-sad",
+                    "severe": "mdi:emoticon-sick",
+                    "danger": "mdi:emoticon-dead"
+                }
+            },
             "cooking_status": {
                 "default": "mdi:information-variant-circle"
+            },
+            "water_level": {
+                "default": "mdi:gauge",
+                "state": {
+                    "empty": "mdi:gauge-empty",
+                    "low": "mdi:gauge-low",
+                    "full": "mdi:gauge-full"
+                }
             },
             "status": {
                 "default": "mdi:information-variant-circle",
@@ -237,7 +340,10 @@
                 }
             },
             "time_remaining": {
-                "default": "mdi:timer"
+                "default": "mdi:timer",
+                "state": {
+                    "0": "mdi:timer-stop"
+                }
             },
             "energy_consumed": {
                 "default": "mdi:flash"
@@ -269,7 +375,38 @@
                 "default": "mdi:power-sleep"
             },
             "uv_sterilization": {
-                "default": "mdi:solar-power"
+                "default": "mdi:sun-wireless"
+            },
+            "electrolytic_sterilization": {
+                "default": "mdi:flash"
+            },
+            "breaker": {
+                "default": "mdi:fuse",
+                "state": {
+                    "on": "mdi:fuse",
+                    "off": "mdi:fuse-off"
+                }
+            }
+        },
+        "text": {
+            "scene": {
+                "default": "mdi:palette"
+            }
+        },
+        "time": {
+            "timer": {
+                "default": "mdi:timer"
+            },
+            "timer_x": {
+                "default": "mdi:timer"
+            }
+        },
+        "water_heater": {
+            "kettle": {
+                "default": "mdi:kettle",
+                "state": {
+                    "off": "mdi:kettle-off"
+                }
             }
         }
     }

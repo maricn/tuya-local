@@ -1,5 +1,6 @@
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.climate.const import ClimateEntityFeature, HVACMode
+from homeassistant.components.number import NumberDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import (
     PERCENTAGE,
@@ -59,6 +60,7 @@ class TestGoldairHeater(
             self.entities.get("number_timer"),
             max=1440,
             step=60,
+            device_class=NumberDeviceClass.DURATION,
             unit=UnitOfTime.MINUTES,
         )
         self.setUpBasicSensor(
@@ -76,11 +78,12 @@ class TestGoldairHeater(
         )
         self.mark_secondary(
             [
+                "binary_sensor_problem",
                 "light_display",
                 "lock_child_lock",
                 "number_timer",
                 "sensor_power_level",
-                "binary_sensor_problem",
+                "time_timer",
             ]
         )
 
@@ -314,14 +317,12 @@ class TestGoldairHeater(
             await self.subject.async_set_swing_mode("3")
 
     def test_extra_state_attributes(self):
-        self.dps[TIMER_DPS] = 5
         self.dps[TIMERACT_DPS] = True
         self.dps[POWERLEVEL_DPS] = 4
 
         self.assertDictEqual(
             self.subject.extra_state_attributes,
             {
-                "timer": 5,
                 "timer_mode": True,
                 "power_level": "4",
             },

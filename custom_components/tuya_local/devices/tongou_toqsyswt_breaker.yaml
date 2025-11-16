@@ -1,30 +1,29 @@
 name: Energy meter
 products:
   - id: kmnzgh4yn8pa0lqh
-    name: Tongou TO-Q-SYS-WT
-primary_entity:
-  entity: sensor
-  class: energy
-  category: diagnostic
-  dps:
-    - id: 1
-      type: integer
-      name: sensor
-      unit: kWh
-      class: total_increasing
-      mapping:
-        - scale: 100
-    - id: 125
-      type: integer
-      name: fap_a
-      mapping:
-        - scale: 100
-    - id: 138
-      type: string
-      name: cycle_time
-secondary_entities:
+    manufacturer: Tongou
+    model: TO-Q-SYS-WT
+entities:
   - entity: sensor
-    name: Voltage A
+    class: energy
+    category: diagnostic
+    dps:
+      - id: 1
+        type: integer
+        name: sensor
+        unit: kWh
+        class: total_increasing
+        mapping:
+          - scale: 100
+      - id: 125
+        type: integer
+        name: fap_a
+        mapping:
+          - scale: 100
+      - id: 138
+        type: string
+        name: cycle_time
+  - entity: sensor
     class: voltage
     category: diagnostic
     dps:
@@ -33,11 +32,10 @@ secondary_entities:
         name: sensor
         optional: true
         unit: V
+        mask: "FFFF000000000000"
         mapping:
-          - mask: "FFFF000000000000"
-            scale: 10
+          - scale: 10
   - entity: sensor
-    name: Current A
     class: current
     category: diagnostic
     dps:
@@ -46,11 +44,10 @@ secondary_entities:
         name: sensor
         optional: true
         unit: A
+        mask: "0000FFFFFF000000"
         mapping:
-          - mask: "0000FFFFFF000000"
-            scale: 1000
+          - scale: 1000
   - entity: sensor
-    name: Power A
     class: power
     category: diagnostic
     dps:
@@ -59,9 +56,9 @@ secondary_entities:
         name: sensor
         optional: true
         unit: kW
+        mask: "0000000000FFFFFF"
         mapping:
-          - mask: "0000000000FFFFFF"
-            scale: 1000
+          - scale: 1000
   - entity: switch
     name: Prepay
     icon: "mdi:cash"
@@ -114,7 +111,9 @@ secondary_entities:
         type: boolean
         name: switch
   - entity: select
-    name: Prepay shortage action
+    translation_key: breaker_trigger_action
+    translation_placeholders:
+      trigger: Prepay shortage
     icon: "mdi:cash"
     category: config
     dps:
@@ -123,12 +122,13 @@ secondary_entities:
         name: option
         mapping:
           - dps_val: Closed
-            value: Ignore
+            value: ignore
           - dps_val: Alarm
-            value: Alarm
+            value: alarm
   - entity: select
-    name: Over voltage action
-    icon: "mdi:flash-triangle"
+    translation_key: breaker_trigger_action
+    translation_placeholders:
+      trigger: Over voltage
     category: config
     dps:
       - id: 102
@@ -136,14 +136,15 @@ secondary_entities:
         name: option
         mapping:
           - dps_val: Closed
-            value: Ignore
+            value: ignore
           - dps_val: Alarm
-            value: Alarm
+            value: alarm
           - dps_val: Trip
-            value: Trip
+            value: trip_breaker
   - entity: select
-    name: Undervoltage action
-    icon: "mdi:flash-triangle"
+    translation_key: breaker_trigger_action
+    translation_placeholders:
+      trigger: Undervoltage
     category: config
     dps:
       - id: 103
@@ -151,14 +152,15 @@ secondary_entities:
         name: option
         mapping:
           - dps_val: Closed
-            value: Ignore
+            value: ignore
           - dps_val: Alarm
-            value: Alarm
+            value: alarm
           - dps_val: Trip
-            value: Trip
+            value: trip_breaker
   - entity: select
-    name: Over current action
-    icon: "mdi:flash-triangle"
+    translation_key: breaker_trigger_action
+    translation_placeholders:
+      trigger: Over current
     category: config
     dps:
       - id: 104
@@ -166,14 +168,15 @@ secondary_entities:
         name: option
         mapping:
           - dps_val: Closed
-            value: Ignore
+            value: ignore
           - dps_val: Alarm
-            value: Alarm
+            value: alarm
           - dps_val: Trip
-            value: Trip
+            value: trip_breaker
   - entity: select
-    name: Over power action
-    icon: "mdi:flash-triangle"
+    translation_key: breaker_trigger_action
+    translation_placeholders:
+      trigger: Over power
     category: config
     dps:
       - id: 105
@@ -181,14 +184,15 @@ secondary_entities:
         name: option
         mapping:
           - dps_val: Closed
-            value: Ignore
+            value: ignore
           - dps_val: Alarm
-            value: Alarm
+            value: alarm
           - dps_val: Trip
-            value: Trip
+            value: trip_breaker
   - entity: select
-    name: High temperature action
-    icon: "mdi:fire"
+    translation_key: breaker_trigger_action
+    translation_placeholders:
+      trigger: High temperature
     category: config
     dps:
       - id: 107
@@ -196,11 +200,11 @@ secondary_entities:
         name: option
         mapping:
           - dps_val: Closed
-            value: Ignore
+            value: ignore
           - dps_val: Alarm
-            value: Alarm
+            value: alarm
           - dps_val: Trip
-            value: Trip
+            value: trip_breaker
   - entity: binary_sensor
     class: connectivity
     category: diagnostic

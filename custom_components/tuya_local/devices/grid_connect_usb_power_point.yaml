@@ -1,20 +1,44 @@
-name: Grid Connect USB charger with power socket
-primary_entity:
-  entity: switch
-  class: outlet
-  dps:
-    - id: 1
-      type: boolean
-      name: switch
-secondary_entities:
+name: USB charger with power socket
+entities:
+  - entity: switch
+    class: outlet
+    dps:
+      - id: 1
+        type: boolean
+        name: switch
   - entity: switch
     name: USB
     dps:
       - id: 2
         type: boolean
         name: switch
+  - entity: time
+    translation_key: timer
+    category: config
+    dps:
+      - id: 9
+        type: integer
+        name: second
+        range:
+          min: 0
+          max: 86400
+  - entity: time
+    translation_key: timer_x
+    translation_placeholders:
+      x: USB
+    category: config
+    dps:
+      - id: 10
+        type: integer
+        name: second
+        range:
+          min: 0
+          max: 86400
   - entity: number
     name: Outlet timer
+    # 2025-07-20
+    deprecated: time.timer
+    class: duration
     translation_key: timer
     category: config
     dps:
@@ -27,9 +51,12 @@ secondary_entities:
         mapping:
           - scale: 60
             step: 60
-        unit: mi
+        unit: min
   - entity: number
     name: USB timer
+    # 2025-07-20
+    deprecated: time.timer_usb
+    class: duration
     translation_key: timer
     category: config
     dps:

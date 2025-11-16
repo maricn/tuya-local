@@ -4,8 +4,7 @@ This directory contains device configuration files, describing the workings
 of supported devices. The files are in YAML format, and describe the mapping
 of Tuya DPs (Data Points) to HomeAssistant attributes.
 
-Each Tuya device may correspond to one primary entity and any number of
-secondary entities in Home Assistant.
+Each Tuya device may correspond to one or more entities in Home Assistant.
 
 ## The Top Level
 
@@ -19,52 +18,33 @@ generic name for the type of device should go in the top level name.
 
 ### `products`
 
-*Optional, for future use.*
-
-A list of products that this config applies to. Each product in the list must
-have an `id` specified, which corresponds to the productId or productKey
-(depending on where you are getting it from) in Tuya info. This is available
-from the Tuya developer web portal listing for your device, or when using
-UDP discovery (via tinytuya). In future it is intended that UDP discovery
-will be used to more precisely match devices to configs, so it is recommended
-to report these if you can find them when requesting a new device. Each
-listing can also have an optional `name`, which is intended to specify the
-specific brand and model name or number of the matching device.  In future
-when local discovery is implemented to discover products by id, this name will
-be displayed on discovery, and be available as manufacturer and model info
-in device settings.
-
-### `primary_entity`
-
-This contains the configuration for one Home Assistant entity which is
-considered the main entity for the device. For example, if the device is
-a heater, this would be a climate entity.
-
-The configuration for entities is detailed in its own section below.
-
-### `secondary_entities`
-
 *Optional.*
 
-This contains a list of additional Home Assistant entities
-providing additional functionality beyond the capabilities of the primary
-entity. Examples include lighting control for display panels as a Home
-Assistant light entity, child locks as a Home Assistant lock entity,
-or additional toggles as Home Assistant switch entities.
+A list of products that this config applies to. Each product in the list must
+have an `id` specified, which corresponds to the product_id from cloud device
+info, or productKey from the local discovery. If these are different, it is
+recommended that listings are created for both.
 
-The configuration for secondary entities is the same as primary entities,
-and is detailed in the section below.
+In addition to the id, the `manufacturer`, `model` and `model_id` (if
+the model has both a name and a more code like id) can be listed here.
+In future the intention is to display these in the Device info panel
+for the device. The `name` can also be overridden here with a more
+specific name to be used in future in place of the generic name at the
+top of the config.
+
+### `entities`
+
+This contains a list of Home Assistant entities providing the functionality
+of the device.
+
+The configuration for each entity in the list is detailed in the section below.
 
 ## Entity configuration
 
 ### `entity`
 
-The Home Assistant entity type being configured. Currently supported
-types are **climate**, **switch**, **light**, **lock**. Functionality
-for these entities is limited to that which has been required for the
-devices until now and may need to be extended for new devices. In
-particular, the light and lock entities have only been used for simple
-secondary entities, so only basic functionality is implemented.
+The Home Assistant entity type being configured. See the **Entity types**
+section below for details on specific requirements for each entity type.
 
 ### `class`
 
@@ -114,6 +94,43 @@ This specifies the `entity category` of the entity. Entities can be categorized
 as `config` or `diagnostic` to restrict where they appear automatically in
 Home Assistant.
 
+### `name`
+
+*Optional.*
+
+The name associated with this entity can be set here. If no name is
+set, it will inherit the name at the top level. This is mostly useful
+for overriding the name entities to give more information about the
+purpose of the entity, or to differentiate multiple entities of the
+same type.
+
+Where possible, `translation_key` should be used instead of an explicit name.
+
+### `mode`
+
+*Optional. For number entities, default="auto", for others, None*
+
+For number entities, this can be used to force `slider` or `box` as the
+input method. The default `auto` uses a slider if the range is small enough,
+or a box otherwise. It is recommended to let HA decide based on its own logic
+which mode to use, and override it in the UI settings rather than forcing
+your personal preference on others. But if an entity really does only make
+sense with one UI mode, then this is provided to handle those cases.
+
+### `hidden`
+
+*Optional, true/unavailable, default=false*
+
+If `hidden` is `true`, then the entity will be disabled by default.
+If `hidden` is `unavailable`, then the entity will be disabled by default if
+the entity's `available` dp indicates it is unavailable. This may not work
+correctly if the device has not returned data yet when HA checks
+for this at startup.
+
+This can be used with advanced config or diagnostic entities that general
+users will not be interested in. To use such entities, the user must explicitly
+enable them after adding the device to Home Assistant.
+
 ### `dps`
 
 This is a list of the definitions for the Tuya DPs associated with
@@ -122,23 +139,6 @@ supported DPs reported by the device.
 
 The configuration of DPs entries is detailed in its own section below.
 
-### `name`
-
-*Optional.*
-
-The name associated with this entity can be set here. If no name is set,
-it will inherit the name at the top level. This is mostly useful for
-overriding the name of secondary entities to give more information
-about the purpose of the entity, as the generic type with the top level
-name may not be sufficient to describe the function.
-
-### `mode`
-
-*Optional. For number entities, default="auto", for others, None*
-
-For number entities, this can be used to force `slider` or `box` as the
-input method. The default `auto` uses a slider if the range is small enough,
-or a box otherwise.
 
 ## DPs configuration
 
@@ -158,6 +158,7 @@ The type of data returned by the Tuya API. Can be one of the following:
  - **base64** is a special case of string, where binary data is base64 encoded. Platforms that use this type will need special handling to make sense of the data.
  - **hex** is a special case of string, where binary data is hex encoded. Platforms that use this type will need special handling to make sense of the data.
  - **json** is a special case of string, where multiple data points are encoded in json format in the string. Platforms that use this type will need special handling to make sense of the data.
+ - **utf16b64** is a special case of string, where a UTF-16 string is base64 encoded. This will be decoded into a UTF-8 string so it is readable in Home Assistant.
  - **float** can contain floating point numbers. No known devices use this, but it is supported if needed.
 
 ### `name`
@@ -165,9 +166,9 @@ The type of data returned by the Tuya API. Can be one of the following:
 The name given to the attribute in Home Assistant. Certain names are used
 by the Home Assistant entities for specific purposes. If a name is not
 recognized as a standard attribute by the entitiy implementation, the
-attribute will be returned as a readonly custom attribute on the entity.
+attribute will be returned as a readonly extra attribute on the entity.
 If you need non-standard attributes to be able to be set, you will need
-to use a secondary entity for that.
+to use an entity for that (typically switch, number or select).
 
 ### `sensitive`
 
@@ -222,14 +223,14 @@ require it. Use this only where needed, and generally only on read-only dps.
 
 *Optional, default None.*
 
-For integer dps that are sensor values, the suggested precision for
-display in Home Assistant can be specified. If unspecified, the Home
-Assistant will use the native precision, which is calculated based on
-the scale of the dp so as to provide distinct values with as few
-decimal places as possible. For example a scale of 3 will result in
-one decimal place by default, (values displayed as x.3, x.7 rather
-than x.33333333 and x.666666) but you could override that to 2 or 0
-with by specifying the precision explicitly.
+The number of decimals which should be used in the sensor's state when
+it's displayed. If unspecified, the Home Assistant will use the native
+precision, which is calculated based on the scale of the dp so as to
+provide distinct values with as few decimal places as possible. For
+example a scale of 3 will result in one decimal place by default,
+(values displayed as x.3, x.7 rather than x.33333333 and x.666666) but
+you could override that to 2 or 0 by specifying the precision
+explicitly.
 
 ### `mapping`
 
@@ -620,7 +621,9 @@ from the camera.
     `none, eco, away, boost, comfort, home, sleep, activity`
    There are also some presets defined by this integration for use with various `translation_key`s, see translations/en.json for details.
 - **swing_mode** (optional, mapping of strings) a dp to control swing modes of the device.
-   Possible values are: `"off", vertical, horizontal`
+   Standard values are: `"off", "on", vertical, horizontal, both`, non-standard values can also be used if needed.
+- **swing_horizontal_mode** (optional, mapping of strings) a dp to control horizontal swing independently of the vertical swing.
+   Standard values are: `"off", "on"`, non-standard values can also be used if needed.
 - **temperature** (optional, number) a dp to set the target temperature of the device.
       A unit may be specified as part of the attribute if a temperature_unit dp is not available, if not
       the default unit configured in HA will be used.
@@ -635,14 +638,14 @@ from the camera.
 
 ### `cover`
 
-Either **position** or **open** should be specified.
+Either **position**, **action** or **open** should be specified otherwise the cover will always appear in an unknown state.
 
 - **position** (optional, number 0-100): a dp to control the percentage that the cover is open.
     0 means completely close, 100 means completely open.
 - **control** (optional, mapping of strings): a dp to control the cover. Mainly useful if **position** cannot be used.
     Valid values are `open, close, stop`
 - **action** (optional, string): a dp that reports the current state of the cover.
-   Special values are `opening, closing`
+   Special values are `opening, closing, opened, closed`
 - **open** (optional, boolean): a dp that reports if the cover is open. Only used if **position** is not available.
 - **tilt_position** (optional, number): a dp to control the tilt opening of the cover (an example is venetian blinds that tilt as well as go up and down). The range will be auto-converted to the 0-100 expected by HA.
 
@@ -691,6 +694,7 @@ The unlock... dps below are normally integers, but can also be boolean, in which
 no information will be available about which specific credential was used to unlock the lock.
 
 - **lock** (optional, boolean): a dp to control the lock state: true = locked, false = unlocked.
+- **lock_state** (optional, boolean): a read-only dp to return the current state of the lock separately from the lock dp (if provided).
 - **open** (optional, boolean): a dp to open or close the door or gate controlled by the lock, or if marked readonly to report the open status.
 - **unlock_fingerprint** (optional, integer): a dp to identify the fingerprint used to unlock the lock.
 - **unlock_password** (optional, integer): a dp to identify the password used to unlock the lock.
@@ -703,10 +707,13 @@ no information will be available about which specific credential was used to unl
 - **unlock_key** (optional, integer): a dp to identify the key used to unlock the lock.
 - **unlock_ble** (optional, integer): a dp to identify the BLE device used to unlock the lock.
 - **unlock_voice** (optional, integer): a dp to identify the voice assistant user used to unlock the lock.
+- **unlock_ibeacon** (optional, integer): a dp to identify the BLE iBeacon used to unlock the lock.
+- **unlock_multi** (optional, integer): a dp to identify the multi-factor user that unlocked the lock.
 - **request_unlock** (optional, integer): a dp to signal that a request has been made to unlock, the value should indicate the time remaining for approval.
 - **approve_unlock** (optional, boolean): a dp to unlock the lock in response to a request.
 - **request_intercom** (optional, integer): a dp to signal that a request has been made via intercom to unlock, the value should indicate the time remaining for approval.
 - **approve_intercom** (optional, boolean): a dp to unlock the lock in response to an intercom request.
+- **code_unlock** (optional, base64): a dp to unlock the lock by giving an 8 digit code. This corresponds in the Tuya info to `remote_no_dp_key` and has a specific format. The 8 digit key assigned to user 1 must be sent to unlock (and optionally lock) the lock.
 - **jammed** (optional, boolean): a dp to signal that the lock is jammed.
 
 ### `number`
@@ -720,7 +727,7 @@ no information will be available about which specific credential was used to unl
 
 ### `remote`
 - **send** (required, accepts a string): a dp to send remote codes.
-- **receive** (optional, returns strings): a dp to receive learned commands on. If not supplied, the `remote.learn_command` service call will not be available. 
+- **receive** (optional, returns strings): a dp to receive learned commands on. If not supplied, the `remote.learn_command` service call will not be available.
 - **control** (optional, accepts strings `"send_ir"`, `"study"`, `"study_exit"`): a dp to send commands seperately from ir codes. If not supplied, commands will be JSON formatted and sent through the **send** dp.
 - **delay** (optional, accepts numbers): a dp to set the delay in ms between buttons when there are multiple in the send string. This is only used when a separate **control** dp is also supplied, otherwise the parameter is included in the JSON sent to the **send** dp.
 - **code_type** (optional, accepts integers): a dp to set the type of code being sent. The current implementation only supports type `0`. This is only used when a separate **control** dp is also supplied, otherwise the parameter is included in the JSON sent to the **send** dp.
@@ -733,13 +740,34 @@ no information will be available about which specific credential was used to unl
     This may be useful for devices that switch between C and F, otherwise a fixed unit attribute on the **sensor** dp can be used.
 
 ### `siren`
-- **tone** (required, mapping of strings): a dp to report and control the siren tone. As this is used to turn on and off the siren, it is required. If this does not fit your siren, the underlying implementation will need to be modified.
-The value "off" will be used for turning off the siren, and will be filtered from the list of available tones. One value must be marked as `default: true` so that the `turn_on` service with no commands works.
-- **volume** (optional, float in range 0.0-1.0): a dp to control the volume of the siren (probably needs a scale and step applied, since Tuya devices will probably use an integer, or strings with fixed values).
+- **switch** (optional, boolean): a dp to switch the siren on and off (depending on the siren, this may trigger it, or arm it for auto triggering). If this is not used, then the **tone** must be present, and containing an "off" option.
+- **tone** (optional, mapping of strings): a dp to report and control the siren tone. This dp is required is there is no **switch**, in which case the value "off" will be used for turning off the siren, and will be filtered from the list of available tones. When the **switch** dp is not used, one value must be marked as `default: true` so that the `turn_on` service with no commands works.
+- **volume_level** (optional, float in range 0.0-1.0): a dp to control the volume of the siren (probably needs a scale and step applied, since Tuya devices will probably use an integer, or strings with fixed values).
 - **duration** (optional, integer): a dp to control how long the siren will sound for.
 
 ### `switch`
 - **switch** (required, boolean): a dp to control the switch state.
+
+### `text`
+- **value** (required, string): a dp to control the text that is set.
+   The value dp of a text entity has a few special attributes.
+     - `range` can be supplied to define the `min` and `max` length of the text.
+     - if `hidden` is specified as `true`, the mode will be set to `password`, otherwise the mode will be `text`.
+     - if the `type` is set to `base64` or `hex`, the `pattern` property of the text entity will be set appropriately. There is currently no way to set an arbitrary pattern.
+
+### `time`
+
+Time is intended to be used for setting wall clock time, daily alarms etc.
+However, it can also be convenient to use it for 24h timers. Since
+there is no way to change the limits in the UI, it is not recommended
+to use it for other length timers.
+
+*At least one of the following dps is required**
+
+- **hour** (optional, integer in range 0-24) - the hours component
+- **minute** (optional, integer in range 0-60 or 0-1440 if the only dp) - the minute component
+- **second** (optional, integer in range 0-60 or 0-84600 if the only dp) - the second component
+- **hms** (optional, string in format "hh:mm", "hh:mm:ss", "hhmm" or "hhmmss" - all components as a string
 
 ### `vacuum`
 - **status** (required, mapping of strings): a dp to report and control the status of the vacuum.
@@ -771,4 +799,3 @@ The value "off" will be used for turning off the siren, and will be filtered fro
 - **max_temperature** (optional, number): a dp that reports the maximum temperature the water heater can be set to, in case this is not a fixed value.
 
 - **away_mode** (optional, boolean): a dp to control whether the water heater is in away mode.
-

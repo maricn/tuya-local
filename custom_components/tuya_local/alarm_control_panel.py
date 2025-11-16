@@ -13,9 +13,9 @@ from homeassistant.components.alarm_control_panel.const import (
 )
 
 from .device import TuyaLocalDevice
+from .entity import TuyaLocalEntity
 from .helpers.config import async_tuya_setup_platform
 from .helpers.device_config import TuyaEntityConfig
-from .helpers.mixin import TuyaLocalEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -61,7 +61,7 @@ class TuyaLocalAlarmControlPanel(TuyaLocalEntity, AlarmControlPanelEntity):
             self._attr_supported_features |= Feature.ARM_VACATION
         if AlarmControlPanelState.ARMED_CUSTOM_BYPASS in alarm_states:
             self._attr_supported_features |= Feature.ARM_CUSTOM_BYPASS
-        if self._trigger_dp:
+        if self._trigger_dp or AlarmControlPanelState.TRIGGERED in alarm_states:
             self._attr_supported_features |= Feature.TRIGGER
         # Code support not implemented
         self._attr_code_format = None

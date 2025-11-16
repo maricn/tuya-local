@@ -1,82 +1,62 @@
 name: Door lock
 products:
   - id: rlyxv7pe
-    name: Raykube A1 Pro Max
-primary_entity:
-  entity: lock
-  dps:
-    - id: 1
-      type: string
-      optional: true
-      name: unlock_method_create
-    - id: 2
-      type: string
-      optional: true
-      name: unlock_method_delete
-    - id: 3
-      type: string
-      optional: true
-      name: unlock_method_modify
-    - id: 16
-      type: integer
-      optional: true
-      persist: false
-      name: unlock_key
-    - id: 19
-      type: integer
-      optional: true
-      persist: false
-      name: unlock_ble
-    - id: 20
-      type: string
-      optional: true
-      name: lock_record
-    - id: 46
-      type: boolean
-      name: lock
-    - id: 47
-      type: boolean
-      name: open
-      readonly: true
-    - id: 54
-      type: string
-      optional: true
-      name: sync_method
-    - id: 61
-      type: string
-      optional: true
-      name: remote_no_dp_key
-    - id: 62
-      type: integer
-      optional: true
-      persist: false
-      name: unlock_app
-    - id: 63
-      type: integer
-      optional: true
-      persist: false
-      name: unlock_voice
-    - id: 69
-      type: string
-      optional: true
-      name: record
-    - id: 70
-      type: string
-      optional: true
-      name: check_code_set
-    - id: 71
-      type: string
-      optional: true
-      name: ble_unlock_check
-    - id: 72
-      type: string
-      optional: true
-      name: unlock_record_check
-    - id: 73
-      type: string
-      optional: true
-      name: remote_pd_setkey_check
-secondary_entities:
+    manufacturer: Raykube
+    model: A1 Pro Max
+entities:
+  - entity: lock
+    dps:
+      - id: 16
+        type: integer
+        optional: true
+        persist: false
+        name: unlock_key
+      - id: 19
+        type: integer
+        optional: true
+        persist: false
+        name: unlock_ble
+      - id: 20
+        type: string
+        optional: true
+        name: lock_record
+      - id: 46
+        type: boolean
+        name: lock
+      - id: 47
+        type: boolean
+        name: open
+        readonly: true
+      - id: 61
+        type: base64
+        optional: true
+        name: code_unlock
+      - id: 62
+        type: integer
+        optional: true
+        persist: false
+        name: unlock_app
+      - id: 63
+        type: integer
+        optional: true
+        persist: false
+        name: unlock_voice
+      - id: 69
+        type: string
+        optional: true
+        name: record
+      - id: 70
+        type: string
+        optional: true
+        name: check_code_set
+      - id: 71
+        type: string
+        optional: true
+        name: ble_unlock_check
+      - id: 72
+        type: string
+        optional: true
+        name: unlock_record_check
   - entity: sensor
     class: battery
     category: diagnostic
@@ -175,3 +155,58 @@ secondary_entities:
       - id: 78
         type: boolean
         name: switch
+  - entity: text
+    name: Remote unlock code
+    category: config
+    icon: "mdi:form-textbox-password"
+    hidden: true
+    dps:
+      - id: 73
+        type: string
+        optional: true
+        sensitive: true
+        name: value
+  - entity: text
+    name: New credential
+    category: config
+    icon: "mdi:card-plus"
+    hidden: true
+    dps:
+      - id: 1
+        type: base64
+        optional: true
+        sensitive: true
+        name: value
+  - entity: text
+    name: Delete credential
+    category: config
+    icon: "mdi:card-minus"
+    hidden: true
+    dps:
+      - id: 2
+        type: base64
+        optional: true
+        sensitive: true
+        name: value
+  - entity: text
+    name: Modify credential
+    category: config
+    icon: "mdi:credit-card-edit"
+    hidden: true
+    dps:
+      - id: 3
+        type: base64
+        optional: true
+        sensitive: true
+        name: value
+  - entity: text
+    name: Sync credentials
+    category: config
+    icon: "mdi:lock-reset"
+    hidden: true
+    dps:
+      - id: 54
+        type: base64
+        optional: true
+        sensitive: true
+        name: value

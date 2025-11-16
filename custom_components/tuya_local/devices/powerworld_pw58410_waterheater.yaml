@@ -1,92 +1,95 @@
 name: Water heat pump
 products:
   - id: 74jzzoqr2ghxyu1p
-    name: Powerworld PW58410
-primary_entity:
-  entity: water_heater
-  dps:
-    - id: 1
-      type: boolean
-      name: operation_mode
-      mapping:
-        - dps_val: false
-          value: "off"
-        - dps_val: true
-          constraint: work_mode
-          conditions:
-            - dps_val: wth
-              value: Hot water
-            - dps_val: heat
-              value: Heating
-            - dps_val: cool
-              value: Cooling
-            - dps_val: wth_heat
-              value: Hot water + heating
-            - dps_val: wth_cool
-              value: Hot water + cooling
-    - id: 5
-      type: string
-      name: work_mode
-      hidden: true
-    - id: 6
-      type: string
-      name: temperature_unit
-      mapping:
-        - dps_val: f
-          value: F
-        - value: C
-    - id: 110
-      type: integer
-      name: temperature
-      range:
-        min: 0
-        max: 99
-    - id: 101
-      type: base64
-      optional: true
-      name: current_temperature
-      mapping:
-        - mask: "000000000000000000000000000000000000000000000000\
-                 00000000FFFFFFFF00000000000000000000000000000000\
-                 000000000000000000000000000000000000000000000000\
-                 0000000000000000"
-    - id: 118
-      type: string
-      optional: true
-      name: parameter_group_1
-    - id: 119
-      type: string
-      optional: true
-      name: parameter_group_2
-    - id: 120
-      type: string
-      optional: true
-      name: parameter_group_3
-    - id: 121
-      type: string
-      optional: true
-      name: parameter_group_4
-    - id: 122
-      type: string
-      optional: true
-      name: parameter_group_5
-    - id: 123
-      type: string
-      optional: true
-      name: parameter_group_6
-    - id: 124
-      type: string
-      optional: true
-      name: parameter_group_7
-    - id: 126
-      type: string
-      optional: true
-      name: parameter_group_8
-    - id: 140
-      type: string
-      optional: true
-      name: power_statistics
-secondary_entities:
+    manufacturer: Powerworld
+    model: PW58410
+entities:
+  - entity: water_heater
+    translation_only_key: water_air
+    dps:
+      - id: 1
+        type: boolean
+        name: operation_mode
+        mapping:
+          - dps_val: false
+            value: "off"
+          - dps_val: true
+            value: heat_pump
+      - id: 6
+        type: string
+        name: temperature_unit
+        mapping:
+          - dps_val: f
+            value: F
+          - value: C
+      - id: 110
+        type: integer
+        name: temperature
+        range:
+          min: 0
+          max: 99
+      - id: 101
+        type: base64
+        optional: true
+        name: current_temperature
+        mask: "000000000000000000000000000000000000000000000000\
+               00000000FFFFFFFF00000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
+      - id: 118
+        type: string
+        optional: true
+        name: parameter_group_1
+      - id: 119
+        type: string
+        optional: true
+        name: parameter_group_2
+      - id: 120
+        type: string
+        optional: true
+        name: parameter_group_3
+      - id: 121
+        type: string
+        optional: true
+        name: parameter_group_4
+      - id: 122
+        type: string
+        optional: true
+        name: parameter_group_5
+      - id: 123
+        type: string
+        optional: true
+        name: parameter_group_6
+      - id: 124
+        type: string
+        optional: true
+        name: parameter_group_7
+      - id: 126
+        type: string
+        optional: true
+        name: parameter_group_8
+      - id: 140
+        type: string
+        optional: true
+        name: power_statistics
+  - entity: select
+    translation_key: heat_pump_mode
+    category: config
+    dps:
+      - id: 5
+        type: string
+        name: option
+        mapping:
+          - dps_val: wth
+            value: hotwater
+          - dps_val: heat
+            value: heat
+          - dps_val: cool
+            value: cool
+          - dps_val: wth_heat
+            value: hotwater_heat
+          - dps_val: wth_cool
+            value: hotwater_cool
   - entity: climate
     dps:
       - id: 2
@@ -189,11 +192,10 @@ secondary_entities:
         type: base64
         optional: true
         name: sensor
-        mapping:
-          - mask: "FFFFFFFF0000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "FFFFFFFF0000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
       - id: 6
         type: string
         name: unit
@@ -210,11 +212,10 @@ secondary_entities:
         type: base64
         optional: true
         name: sensor
-        mapping:
-          - mask: "00000000FFFFFFFF00000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "00000000FFFFFFFF00000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
       - id: 6
         type: string
         name: unit
@@ -231,11 +232,10 @@ secondary_entities:
         type: base64
         optional: true
         name: sensor
-        mapping:
-          - mask: "0000000000000000FFFFFFFF000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "0000000000000000FFFFFFFF000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
       - id: 6
         type: string
         name: unit
@@ -252,11 +252,10 @@ secondary_entities:
         type: base64
         optional: true
         name: sensor
-        mapping:
-          - mask: "000000000000000000000000FFFFFFFF0000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "000000000000000000000000FFFFFFFF0000000000000000\
+               000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
       - id: 6
         type: string
         name: unit
@@ -273,11 +272,10 @@ secondary_entities:
         type: base64
         optional: true
         name: sensor
-        mapping:
-          - mask: "00000000000000000000000000000000FFFFFFFF00000000\
-                   000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "00000000000000000000000000000000FFFFFFFF00000000\
+               000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
       - id: 6
         type: string
         name: unit
@@ -294,11 +292,10 @@ secondary_entities:
         type: base64
         optional: true
         name: sensor
-        mapping:
-          - mask: "0000000000000000000000000000000000000000FFFFFFFF\
-                   000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "0000000000000000000000000000000000000000FFFFFFFF\
+               000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
       - id: 6
         type: string
         name: unit
@@ -315,11 +312,10 @@ secondary_entities:
         type: base64
         optional: true
         name: sensor
-        mapping:
-          - mask: "000000000000000000000000000000000000000000000000\
-                   FFFFFFFF0000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "000000000000000000000000000000000000000000000000\
+               FFFFFFFF0000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
       - id: 6
         type: string
         name: unit
@@ -335,11 +331,10 @@ secondary_entities:
         type: base64
         optional: true
         name: sensor
-        mapping:
-          - mask: "000000000000000000000000000000000000000000000000\
-                   0000000000000000FFFFFFFF000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "000000000000000000000000000000000000000000000000\
+               0000000000000000FFFFFFFF000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
   - entity: sensor
     name: Secondary EEV opening
     category: diagnostic
@@ -348,11 +343,10 @@ secondary_entities:
         type: base64
         optional: true
         name: sensor
-        mapping:
-          - mask: "000000000000000000000000000000000000000000000000\
-                   000000000000000000000000FFFFFFFF0000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "000000000000000000000000000000000000000000000000\
+               000000000000000000000000FFFFFFFF0000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
   - entity: sensor
     name: Compressor current
     class: current
@@ -363,11 +357,10 @@ secondary_entities:
         optional: true
         name: sensor
         unit: A
-        mapping:
-          - mask: "000000000000000000000000000000000000000000000000\
-                   00000000000000000000000000000000FFFFFFFF00000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "000000000000000000000000000000000000000000000000\
+               00000000000000000000000000000000FFFFFFFF00000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
   - entity: sensor
     name: Heat sink temperature
     class: temperature
@@ -377,11 +370,10 @@ secondary_entities:
         type: base64
         optional: true
         name: sensor
-        mapping:
-          - mask: "000000000000000000000000000000000000000000000000\
-                   0000000000000000000000000000000000000000FFFFFFFF\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "000000000000000000000000000000000000000000000000\
+               0000000000000000000000000000000000000000FFFFFFFF\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
       - id: 6
         type: string
         name: unit
@@ -399,11 +391,10 @@ secondary_entities:
         optional: true
         name: sensor
         unit: V
-        mapping:
-          - mask: "000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   FFFFFFFF0000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               FFFFFFFF0000000000000000000000000000000000000000\
+               0000000000000000"
   - entity: sensor
     name: Compressor frequency
     class: frequency
@@ -414,11 +405,10 @@ secondary_entities:
         optional: true
         name: sensor
         unit: Hz
-        mapping:
-          - mask: "000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   00000000FFFFFFFF00000000000000000000000000000000\
-                   0000000000000000"
+        mask: "000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               00000000FFFFFFFF00000000000000000000000000000000\
+               0000000000000000"
   - entity: sensor
     name: Fan 1 speed
     category: diagnostic
@@ -428,11 +418,10 @@ secondary_entities:
         optional: true
         name: sensor
         unit: rpm
-        mapping:
-          - mask: "000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000FFFFFFFF000000000000000000000000\
-                   0000000000000000"
+        mask: "000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000FFFFFFFF000000000000000000000000\
+               0000000000000000"
   - entity: sensor
     name: Fan 2 speed
     category: diagnostic
@@ -442,11 +431,10 @@ secondary_entities:
         optional: true
         name: sensor
         unit: rpm
-        mapping:
-          - mask: "000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   000000000000000000000000FFFFFFFF0000000000000000\
-                   0000000000000000"
+        mask: "000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               000000000000000000000000FFFFFFFF0000000000000000\
+               0000000000000000"
   - entity: sensor
     class: pressure
     category: diagnostic
@@ -456,11 +444,10 @@ secondary_entities:
         optional: true
         name: sensor
         unit: bar
-        mapping:
-          - mask: "000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   00000000000000000000000000000000FFFFFFFF00000000\
-                   0000000000000000"
+        mask: "000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               00000000000000000000000000000000FFFFFFFF00000000\
+               0000000000000000"
   - entity: sensor
     name: Low pressure gas temperature
     class: temperature
@@ -470,11 +457,10 @@ secondary_entities:
         type: base64
         optional: true
         name: sensor
-        mapping:
-          - mask: "000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000000000000000000000000000FFFFFFFF\
-                   0000000000000000"
+        mask: "000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000000000000000000000000000FFFFFFFF\
+               0000000000000000"
       - id: 6
         type: string
         name: unit
@@ -492,12 +478,12 @@ secondary_entities:
         optional: true
         name: sensor
         unit: kW
+        mask: "FFFFFFFF0000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
         mapping:
-          - mask: "FFFFFFFF0000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
-            scale: 10
+          - scale: 10
   - entity: sensor
     class: volume_flow_rate
     category: diagnostic
@@ -507,12 +493,12 @@ secondary_entities:
         optional: true
         name: sensor
         unit: m³/h
+        mask: "00000000FFFFFFFF00000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
         mapping:
-          - mask: "00000000FFFFFFFF00000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
-            scale: 10
+          - scale: 10
   - entity: sensor
     class: current
     category: diagnostic
@@ -522,11 +508,10 @@ secondary_entities:
         optional: true
         name: sensor
         unit: A
-        mapping:
-          - mask: "0000000000000000FFFFFFFF000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "0000000000000000FFFFFFFF000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
   - entity: sensor
     class: voltage
     category: diagnostic
@@ -536,11 +521,10 @@ secondary_entities:
         optional: true
         name: sensor
         unit: V
-        mapping:
-          - mask: "000000000000000000000000FFFFFFFF0000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "000000000000000000000000FFFFFFFF0000000000000000\
+               000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
   - entity: sensor
     class: power
     category: diagnostic
@@ -550,11 +534,10 @@ secondary_entities:
         optional: true
         name: sensor
         unit: W
-        mapping:
-          - mask: "00000000000000000000000000000000FFFFFFFF00000000\
-                   000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "00000000000000000000000000000000FFFFFFFF00000000\
+               000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
   - entity: sensor
     name: Coefficient of performance
     category: diagnostic
@@ -563,12 +546,12 @@ secondary_entities:
         type: base64
         optional: true
         name: sensor
+        mask: "0000000000000000000000000000000000000000FFFFFFFF\
+               000000000000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
         mapping:
-          - mask: "0000000000000000000000000000000000000000FFFFFFFF\
-                   000000000000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
-            scale: 10
+          - scale: 10
   - entity: number
     name: Pump speed
     category: config
@@ -577,11 +560,10 @@ secondary_entities:
         type: base64
         optional: true
         name: value
-        mapping:
-          - mask: "000000000000000000000000000000000000000000000000\
-                   FFFFFFFF0000000000000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "000000000000000000000000000000000000000000000000\
+               FFFFFFFF0000000000000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"
         range:
           min: 0
           max: 100
@@ -593,8 +575,7 @@ secondary_entities:
         type: base64
         optional: true
         name: sensor
-        mapping:
-          - mask: "000000000000000000000000000000000000000000000000\
-                   00000000FFFFFFFF00000000000000000000000000000000\
-                   000000000000000000000000000000000000000000000000\
-                   0000000000000000"
+        mask: "000000000000000000000000000000000000000000000000\
+               00000000FFFFFFFF00000000000000000000000000000000\
+               000000000000000000000000000000000000000000000000\
+               0000000000000000"

@@ -1,18 +1,17 @@
 name: Water sprinkler
 products:
   - id: nxquc5lb
-    name: SOP10
-primary_entity:
-  entity: valve
-  class: water
-  dps:
-    - id: 1
-      type: boolean
-      name: valve
-    - id: 12
-      type: string
-      name: work_state
-secondary_entities:
+    model: SOP10
+entities:
+  - entity: valve
+    class: water
+    dps:
+      - id: 1
+        type: boolean
+        name: valve
+      - id: 12
+        type: string
+        name: work_state
   - entity: binary_sensor
     class: problem
     category: diagnostic
@@ -67,8 +66,29 @@ secondary_entities:
             value: "48h"
           - dps_val: "72h"
             value: "72h"
+  - entity: time
+    translation_key: timer
+    category: config
+    dps:
+      - id: 11
+        type: integer
+        name: second
+        range:
+          min: 0
+          max: 86400
+      - id: 16
+        type: string
+        name: cycle_timer
+        optional: true
+      - id: 17
+        type: string
+        name: schedule
+        optional: true
   - entity: number
     translation_key: timer
+    # 2025-07-20
+    deprecated: time.timer
+    class: duration
     category: config
     dps:
       - id: 11
@@ -80,14 +100,6 @@ secondary_entities:
           max: 86400
         mapping:
           - scale: 60
-      - id: 16
-        type: string
-        name: cycle_timer
-        optional: true
-      - id: 17
-        type: string
-        name: schedule
-        optional: true
   - entity: sensor
     name: Weather
     icon: "mdi:weather-cloudy-alert"
