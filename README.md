@@ -206,7 +206,7 @@ Many Tuya devices do not handle multiple commands sent in quick
 succession.  Some will reboot, possibly changing state in the process,
 others will go offline for 30s to a few minutes if you overload them.
 There is some rate limiting to try to avoid this, but it is not
-sufficient for many devices, and may not work across entities where
+sufficient for some devices, and may not work across entities where
 you are sending commands to multiple entities on the same device.  The
 rate limiting also combines commands, which not all devices can
 handle. If you are sending commands from an automation, it is best to
@@ -217,7 +217,7 @@ may still need a delay after that.  The exact timing depends on the
 device, so you may need to experiment to find the minimum delay that
 gives reliable results.
 
-Some devices can handle multiple commands in a single message, so for
+Most devices can handle multiple commands in a single message, so for
 entity platforms that support it (eg climate `set_temperature` can
 include presets, lights pretty much everything is set through
 `turn_on`) multiple settings are sent at once.  But some devices do
@@ -239,10 +239,31 @@ If your device connects via a hub (eg. battery powered water timers) you have to
 - Local key: the **hub's** local key
 - Sub device id: the **actual device you want to control's** `node_id`. Note this `node_id` differs from the device id, you can find it with tinytuya as described below.
 
+## Secure locks
+
+Many locks are designed with basic security controls to make remote unlocking
+more difficult. This integration supports the standard BLE lock model from Tuya
+which uses a pair of dps (60: `remote_no_pd_seykey`, 61: `remote_no_dp_key`)
+to share a key between the app and the lock during the pairing phase.
+If you have access to the Tuya developer portal, you can eavesdrop on the
+second of these messages when the app is used to unlock the lock remotely.
+If you capture the value sent by the app, then you can decode it using a base64
+decoder such as https://base64decode.org.
+The format has 4 bytes of binary data, followed by an 8 digit ASCII numeric
+code, followed by 3 or 4 more bytes of binary data.
+
+The 8 digit numeric code from the first app that was paired should work for
+unlocking the lock.
+
+Although this is documented in the BLE lock documentation from Tuya, Zigbee
+and WiFi locks often use the same naming for datapoints, which may be
+compatible with this scheme.
+
 ## Contributing
 
 Beyond contributing device configs, here are some areas that could benefit from more hands:
 
-1. Unit tests. This integration is mostly unit-tested thanks to the upstream project, but there are a few more to complete. Feel free to use existing specs as inspiration and the Sonar Cloud analysis to see where the gaps are.
-2. Once unit tests are complete, the next task is to properly evaluate against the Home Assistant quality scale.
+1. Unit tests. This integration is mostly unit-tested thanks to the upstream project, but there are a few more to complete. Focus on unit tests is on python code, the current coverage is summarised in reports on github, but to get full coverage details you can run the tests yourself.
+2. Once unit tests are complete, the next task is to properly evaluate against the Home Assistant quality scale. 
 3. Discovery. Local discovery is currently limited to finding the IP address in the cloud assisted config. Performing discovery in background would allow notifications to be raised when new devices are noticed on the network, and would provide a productKey for the manual config method to use when matching device configs.
+

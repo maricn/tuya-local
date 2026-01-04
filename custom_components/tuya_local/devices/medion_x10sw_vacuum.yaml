@@ -284,7 +284,7 @@ entities:
         optional: true
         name: button
   - entity: switch
-    name: Do not disturb
+    translation_key: do_not_disturb
     category: config
     dps:
       - id: 25
@@ -295,9 +295,8 @@ entities:
         optional: true
         name: schedule
   - entity: number
-    name: Volume
+    translation_key: volume
     category: config
-    icon: "mdi:volume-high"
     dps:
       - id: 26
         type: integer

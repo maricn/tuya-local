@@ -26,7 +26,7 @@ entities:
         type: integer
         range:
           min: 50
-          max: 350
+          max: 400
         unit: C
         mapping:
           - scale: 10
@@ -39,6 +39,10 @@ entities:
       - id: 4
         name: mode
         type: string
+        hidden: true
+      - id: 111
+        type: string
+        name: p_mode
         hidden: true
       - id: 113
         type: boolean
@@ -53,18 +57,14 @@ entities:
                 value: manual
               - dps_val: program
                 value: program
-      - id: 111
-        type: string
-        name: p_mode
-        hidden: true
-  - entity: sensor
-    class: humidity
+  - entity: switch
+    name: Eco
+    icon: "mdi:leaf"
+    category: config
     dps:
-      - id: 121
-        name: sensor
-        type: integer
-        unit: "%"
-        class: measurement
+      - id: 8
+        type: boolean
+        name: switch
   - entity: lock
     translation_key: child_lock
     category: config
@@ -96,6 +96,38 @@ entities:
       - id: 11
         type: bitfield
         name: fault_code
+  - entity: number
+    translation_key: temperature_calibration
+    class: temperature
+    category: config
+    mode: box
+    dps:
+      - id: 19
+        type: integer
+        name: value
+        mapping:
+          - scale: 10
+            step: 5
+            range:
+              min: -100
+              max: 100
+        unit: C
+  - entity: number
+    name: "Anti-frost temperature"
+    class: temperature
+    category: config
+    mode: box
+    dps:
+      - id: 102
+        type: integer
+        name: value
+        mapping:
+          - scale: 10
+            step: 5
+            range:
+              min: 50
+              max: 100
+        unit: C
   - entity: sensor
     class: energy
     dps:
@@ -105,6 +137,8 @@ entities:
         precision: 0
         unit: kWh
         class: total_increasing
+        mapping:
+          - scale: 100
   - entity: binary_sensor
     class: window
     dps:
@@ -115,21 +149,31 @@ entities:
           - dps_val: open
             value: true
           - value: false
-  - entity: switch
-    name: Eco
-    icon: "mdi:leaf"
+  - entity: number
+    name: "Away temperature"
+    class: temperature
     category: config
+    mode: box
     dps:
-      - id: 8
-        type: boolean
-        name: switch
-  - entity: switch
-    translation_key: anti_frost
-    category: config
+      - id: 117
+        type: integer
+        name: value
+        mapping:
+          - scale: 10
+            step: 5
+            range:
+              min: 50
+              max: 400
+        unit: C
+  - entity: sensor
+    translation_key: time_remaining
+    class: duration
+    category: diagnostic
     dps:
-      - id: 123
-        type: boolean
-        name: switch
+      - id: 119
+        type: integer
+        name: sensor
+        unit: min
   - entity: select
     name: Boost
     translation_key: timer
@@ -189,3 +233,50 @@ entities:
             value: "1h55m"
           - dps_val: "120min"
             value: "2h"
+  - entity: sensor
+    class: humidity
+    dps:
+      - id: 121
+        name: sensor
+        type: integer
+        unit: "%"
+        class: measurement
+  - entity: switch
+    translation_key: anti_frost
+    category: config
+    dps:
+      - id: 123
+        type: boolean
+        name: switch
+  - entity: number
+    translation_key: maximum_temperature
+    class: temperature
+    category: config
+    mode: box
+    dps:
+      - id: 166
+        type: integer
+        name: value
+        mapping:
+          - scale: 10
+            step: 5
+            range:
+              min: 150
+              max: 350
+        unit: C
+  - entity: number
+    translation_key: minimum_temperature
+    class: temperature
+    category: config
+    mode: box
+    dps:
+      - id: 170
+        type: integer
+        name: value
+        mapping:
+          - scale: 10
+            step: 5
+            range:
+              min: 100
+              max: 300
+        unit: C

@@ -39,23 +39,8 @@ entities:
         range:
           min: 0
           max: 1440
-  - entity: number
-    translation_key: timer
-    # 2025-07-20
-    deprecated: time.timer
-    class: duration
-    category: config
-    dps:
-      - id: 6
-        type: integer
-        name: value
-        unit: min
-        range:
-          min: 0
-          max: 1440
   - entity: select
-    name: Mode
-    icon: "mdi:dishwasher"
+    translation_key: washing_mode
     category: config
     dps:
       - id: 7
@@ -79,7 +64,7 @@ entities:
           - dps_val: hygiene
             value: hygiene
           - dps_val: universal
-            value: universal
+            value: standard
           - dps_val: soak
             value: soak
           - dps_val: self_cleaning

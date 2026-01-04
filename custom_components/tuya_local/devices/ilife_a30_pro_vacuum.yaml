@@ -9,9 +9,38 @@ entities:
       - id: 1
         type: boolean
         name: activate
+        optional: true
+        mapping:
+          - dps_val: false
+            constraint: pause
+            conditions:
+              - dps_val: true
+                value: false
+              - dps_val: false
+                value: false
+                hidden: true
+              - dps_val: null
+                value: false
+                hidden: true
+          - dps_val: true
+            constraint: pause
+            conditions:
+              - dps_val: false
+                value: true
+              - dps_val: true
+                value: true
+                hidden: true
+              - dps_val: null
+                value: true
+                hidden: true
+          - dps_val: null
+            value: false
+            hidden: true
       - id: 2
         type: boolean
+        optional: true
         name: pause
+        hidden: true
       - id: 4
         type: string
         name: command
@@ -51,7 +80,7 @@ entities:
           - dps_val: goto_pos
             value: seeking_spot
           - dps_val: pos_arrived
-            value: located spot
+            value: located_spot
           - dps_val: pos_unarrive
             value: left_spot
           - dps_val: goto_charge
@@ -69,15 +98,15 @@ entities:
           - dps_val: explore_clean
             value: explore_clean
           - dps_val: base_charging
-            value: base_charging
+            value: charging
           - dps_val: adapter_charging
-            value: adapter_charging
+            value: charging
           - dps_val: base_sleeping
-            value: base_sleeping
+            value: docked
           - dps_val: adapter_sleeping
-            value: adapter_sleeping
+            value: sleep
           - dps_val: continuation_charging
-            value: continuation_charging
+            value: charging
           - dps_val: in_positioning
             value: in_positioning
       - id: 9
@@ -248,9 +277,8 @@ entities:
           min: 0
           max: 4
   - entity: number
-    name: Volume
+    translation_key: volume
     category: config
-    icon: "mdi:volume-high"
     dps:
       - id: 26
         type: integer
@@ -324,8 +352,7 @@ entities:
         name: button
         optional: true
   - entity: switch
-    name: Do not disturb
-    icon: "mdi:minus-circle"
+    translation_key: do_not_disturb
     category: config
     dps:
       - id: 25

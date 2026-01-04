@@ -30,9 +30,8 @@ entities:
         type: boolean
         name: switch
   - entity: switch
-    name: Flip image
+    translation_key: flip_image
     category: config
-    icon: "mdi:flip-vertical"
     dps:
       - id: 103
         type: boolean
@@ -325,9 +324,8 @@ entities:
         name: message
         optional: true
   - entity: number
-    name: Volume
+    translation_key: volume
     category: config
-    icon: "mdi:volume-high"
     dps:
       - id: 160
         type: integer
